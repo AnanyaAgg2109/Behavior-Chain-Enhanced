@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BehaviorChain — Web3 Behavioral Intelligence Platform</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- NOISE + GRID OVERLAYS -->
+<div class="noise-layer"></div>
+<div class="grid-layer"></div>
+
+<!-- ==================== AUTH SCREENS ==================== -->
+<div id="authScreen" class="auth-screen">
+  <div class="auth-left">
+    <div class="auth-brand">
+      <div class="auth-logo"><span>BC</span></div>
+      <h1>BehaviorChain</h1>
+    </div>
+    <div class="auth-tagline">
+      <p class="auth-big">Map your mind.<br/>Own your data.<br/>On-chain.</p>
+      <p class="auth-small">The world's first Web3 behavioral intelligence platform connecting psychology, blockchain, and human insight.</p>
+    </div>
+    <div class="auth-stats">
+      <div class="as-item"><span class="as-num">12,840</span><span class="as-lbl">Profiles Minted</span></div>
+      <div class="as-item"><span class="as-num">47</span><span class="as-lbl">Psychologists</span></div>
+      <div class="as-item"><span class="as-num">98%</span><span class="as-lbl">Satisfaction</span></div>
+    </div>
+  </div>
+  <div class="auth-right">
+    <!-- LOGIN FORM -->
+    <div class="auth-panel" id="loginPanel">
+      <h2 class="auth-title">Welcome back</h2>
+      <p class="auth-sub">Sign in to your behavioral profile</p>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="loginEmail" class="form-input" placeholder="you@example.com"/>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPassword" class="form-input" placeholder="••••••••"/>
+      </div>
+      <div class="form-row">
+        <label class="checkbox-label">
+          <input type="checkbox" id="rememberMe"/> Remember me
+        </label>
+        <a href="#" class="form-link">Forgot password?</a>
+      </div>
+      <button class="btn-auth" id="loginBtn">Sign In →</button>
+      <div class="auth-divider"><span>or</span></div>
+      <button class="btn-wallet-auth" id="loginWithWallet">
+        <span>⬡</span> Continue with MetaMask
+      </button>
+      <p class="auth-switch">Don't have an account? <a href="#" onclick="switchAuth('signup')">Sign up free</a></p>
+    </div>
+
+    <!-- SIGNUP FORM -->
+    <div class="auth-panel hidden" id="signupPanel">
+      <h2 class="auth-title">Create account</h2>
+      <p class="auth-sub">Start building your behavioral profile</p>
+      <div class="form-row-2">
+        <div class="form-group">
+          <label>First Name</label>
+          <input type="text" id="signupFirst" class="form-input" placeholder="Aarav"/>
+        </div>
+        <div class="form-group">
+          <label>Last Name</label>
+          <input type="text" id="signupLast" class="form-input" placeholder="Shah"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" id="signupEmail" class="form-input" placeholder="you@example.com"/>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="signupPassword" class="form-input" placeholder="Min 8 characters"/>
+      </div>
+      <div class="form-group">
+        <label>I am a...</label>
+        <select id="signupRole" class="form-input form-select">
+          <option value="user">Individual — exploring my behavior</option>
+          <option value="student">Student — academic research</option>
+          <option value="professional">Professional — workplace insights</option>
+        </select>
+      </div>
+      <button class="btn-auth" id="signupBtn">Create Account →</button>
+      <div class="auth-divider"><span>or</span></div>
+      <button class="btn-wallet-auth" id="signupWithWallet">
+        <span>⬡</span> Sign up with MetaMask
+      </button>
+      <p class="auth-switch">Already have an account? <a href="#" onclick="switchAuth('login')">Sign in</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== MAIN APP ==================== -->
+<div id="mainApp" class="hidden">
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <div class="nav-brand" onclick="navigateTo('home')">
+      <div class="nav-logo">BC</div>
+      <span>BehaviorChain</span>
+    </div>
+    <div class="nav-links" id="navLinks">
+      <a class="nav-link active" data-page="home">Home</a>
+      <a class="nav-link" data-page="articles">Articles</a>
+      <a class="nav-link" data-page="games">Games</a>
+      <a class="nav-link" data-page="chat">AI Chat</a>
+      <a class="nav-link" data-page="consult">Consult</a>
+      <a class="nav-link" data-page="analysis">My Profile</a>
+      <a class="nav-link" data-page="blockchain">Blockchain</a>
+    </div>
+    <div class="nav-right">
+      <div class="nav-user" id="navUser">
+        <div class="user-avatar" id="navAvatar">?</div>
+        <span id="navUserName">User</span>
+      </div>
+      <div class="nav-wallet-status" id="navWalletStatus">
+        <button class="btn-connect-nav" id="navConnectWallet">⬡ Connect</button>
+        <div class="wallet-connected hidden" id="walletConnected">
+          <span class="wc-dot"></span>
+          <span id="walletShort">0x...</span>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="logout()">↩</button>
+    </div>
+  </nav>
+
+  <!-- PAGES -->
+  <main id="pageContainer">
+
+    <!-- ===== HOME ===== -->
+    <section class="page active" id="page-home">
+      <div class="home-hero">
+        <div class="hero-left">
+          <div class="hero-badge">🧠 Behavioral Intelligence × Web3</div>
+          <h1 class="hero-h1">Understand the <em>architecture</em> of your mind</h1>
+          <p class="hero-p">BehaviorChain tracks how you think, decide, and engage — then mints your behavioral profile as an immutable on-chain identity. Consult real psychologists. Play cognitive games. Read research. Own your data.</p>
+          <div class="hero-btns">
+            <button class="btn-primary" onclick="navigateTo('analysis')">View My Profile</button>
+            <button class="btn-outline" onclick="navigateTo('consult')">Talk to a Psychologist</button>
+          </div>
+        </div>
+        <div class="hero-right">
+          <div class="hero-orb-system">
+            <div class="hs-ring r1"><div class="hs-dot"></div></div>
+            <div class="hs-ring r2"><div class="hs-dot"></div></div>
+            <div class="hs-ring r3"><div class="hs-dot"></div></div>
+            <div class="hs-center">
+              <div class="hs-score" id="heroScore">—</div>
+              <div class="hs-label">Profile Score</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Activity Grid -->
+      <div class="home-section">
+        <h2 class="section-title">Quick Activities</h2>
+        <div class="activity-grid">
+          <div class="activity-card" onclick="navigateTo('articles')">
+            <div class="ac-icon">📰</div>
+            <h3>Read Articles</h3>
+            <p>10 in-depth psychology & neuroscience articles</p>
+            <span class="ac-tag">+Attention Score</span>
+          </div>
+          <div class="activity-card" onclick="navigateTo('games')">
+            <div class="ac-icon">🎮</div>
+            <h3>Cognitive Games</h3>
+            <p>4 games measuring memory, logic & reaction time</p>
+            <span class="ac-tag">+Intelligence Score</span>
+          </div>
+          <div class="activity-card" onclick="navigateTo('chat')">
+            <div class="ac-icon">💬</div>
+            <h3>AI Psychologist</h3>
+            <p>Deep behavioral questionnaire with 30+ prompts</p>
+            <span class="ac-tag">+Self-Awareness</span>
+          </div>
+          <div class="activity-card" onclick="navigateTo('consult')">
+            <div class="ac-icon">👨‍⚕️</div>
+            <h3>Book a Session</h3>
+            <p>Real psychologists available for 1-on-1 sessions</p>
+            <span class="ac-tag">Premium</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Tracker -->
+      <div class="home-section">
+        <h2 class="section-title">Live Behavioral Tracker</h2>
+        <div class="tracker-grid" id="trackerGrid">
+          <div class="tg-item"><span class="tg-val" id="tg-events">0</span><span class="tg-lbl">Events Captured</span></div>
+          <div class="tg-item"><span class="tg-val" id="tg-articles">0</span><span class="tg-lbl">Articles Read</span></div>
+          <div class="tg-item"><span class="tg-val" id="tg-games">0</span><span class="tg-lbl">Games Played</span></div>
+          <div class="tg-item"><span class="tg-val" id="tg-chats">0</span><span class="tg-lbl">Chat Exchanges</span></div>
+          <div class="tg-item"><span class="tg-val" id="tg-score">—</span><span class="tg-lbl">Profile Score</span></div>
+          <div class="tg-item"><span class="tg-val" id="tg-chain">Offline</span><span class="tg-lbl">Chain Status</span></div>
+        </div>
+      </div>
+
+      <div class="disclaimer-strip">⚠ BehaviorChain provides behavioral insights for educational purposes only — not psychological diagnosis. Always consult a licensed professional for clinical concerns.</div>
+    </section>
+
+    <!-- ===== ARTICLES ===== -->
+    <section class="page" id="page-articles">
+      <div class="page-hdr">
+        <h2>Research Library</h2>
+        <p>10 in-depth articles on psychology, neuroscience & behavior. Reading patterns are tracked.</p>
+        <div class="track-badge"><span class="pulse"></span>Behavior tracking active</div>
+      </div>
+      <div class="articles-filter">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="neuroscience">Neuroscience</button>
+        <button class="filter-btn" data-filter="psychology">Psychology</button>
+        <button class="filter-btn" data-filter="behavior">Behavioral Econ</button>
+        <button class="filter-btn" data-filter="cognitive">Cognitive Science</button>
+      </div>
+      <div class="articles-grid" id="articlesGrid"></div>
+    </section>
+
+    <!-- ===== GAMES ===== -->
+    <section class="page" id="page-games">
+      <div class="page-hdr">
+        <h2>Cognitive Games Lab</h2>
+        <p>4 scientifically-designed games that measure different dimensions of cognition.</p>
+      </div>
+      <div class="games-tabs">
+        <button class="game-tab active" data-game="sequence">🔢 Sequence Memory</button>
+        <button class="game-tab" data-game="stroop">🎨 Stroop Challenge</button>
+        <button class="game-tab" data-game="reaction">⚡ Reaction Time</button>
+        <button class="game-tab" data-game="logic">🧩 Logic Grid</button>
+      </div>
+      <div class="game-arena" id="gameArena"></div>
+    </section>
+
+    <!-- ===== CHAT ===== -->
+    <section class="page" id="page-chat">
+      <div class="page-hdr">
+        <h2>BehaviorBot — AI Psychologist</h2>
+        <p>A structured behavioral interview. 30+ adaptive questions across 6 psychological dimensions.</p>
+      </div>
+      <div class="chat-layout">
+        <div class="chat-sidebar">
+          <h4>Dimensions Explored</h4>
+          <div class="dim-list" id="dimList">
+            <div class="dim-item" data-dim="decision"><span>🎯</span>Decision Making<div class="dim-bar"><div class="dim-fill" style="width:0%"></div></div></div>
+            <div class="dim-item" data-dim="emotion"><span>💛</span>Emotional IQ<div class="dim-bar"><div class="dim-fill" style="width:0%"></div></div></div>
+            <div class="dim-item" data-dim="social"><span>🤝</span>Social Style<div class="dim-bar"><div class="dim-fill" style="width:0%"></div></div></div>
+            <div class="dim-item" data-dim="cognitive"><span>🧠</span>Cognitive Style<div class="dim-bar"><div class="dim-fill" style="width:0%"></div></div></div>
+            <div class="dim-item" data-dim="stress"><span>⚡</span>Stress Response<div class="dim-bar"><div class="dim-fill" style="width:0%"></div></div></div>
+            <div class="dim-item" data-dim="growth"><span>🌱</span>Growth Mindset<div class="dim-bar"><div class="dim-fill" style="width:0%"></div></div></div>
+          </div>
+          <div class="chat-progress-info">
+            <span id="chatQNum">0</span>/30 questions answered
+          </div>
+        </div>
+        <div class="chat-main">
+          <div class="chat-window" id="chatWindow"></div>
+          <div class="chat-bottom">
+            <div class="quick-chips" id="quickChips"></div>
+            <div class="chat-input-row">
+              <input type="text" id="chatInput" class="chat-input" placeholder="Type your response or pick an option above..."/>
+              <button class="btn-send" id="btnSend">→</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CONSULT ===== -->
+    <section class="page" id="page-consult">
+      <div class="page-hdr">
+        <h2>Consult Real Psychologists</h2>
+        <p>Book a 1-on-1 video or text session with a certified behavioral psychologist. Payment simulated on-chain.</p>
+      </div>
+      <div class="consult-plans">
+        <div class="plan-card">
+          <div class="plan-badge">Most Popular</div>
+          <h3>Quick Insight</h3>
+          <div class="plan-price">₹199 <span>/ 30 min</span></div>
+          <ul class="plan-features">
+            <li>✓ 1-on-1 text session</li>
+            <li>✓ Behavioral report review</li>
+            <li>✓ 3 follow-up questions</li>
+            <li>✓ Summary PDF</li>
+          </ul>
+          <button class="btn-plan" onclick="openBooking('quick','199')">Book Now</button>
+        </div>
+        <div class="plan-card featured">
+          <div class="plan-badge gold">Premium</div>
+          <h3>Deep Dive</h3>
+          <div class="plan-price">₹499 <span>/ 60 min</span></div>
+          <ul class="plan-features">
+            <li>✓ Video + text session</li>
+            <li>✓ Full personality report</li>
+            <li>✓ Career mapping</li>
+            <li>✓ 7-day follow-up</li>
+            <li>✓ NFT Certificate</li>
+          </ul>
+          <button class="btn-plan gold" onclick="openBooking('deep','499')">Book Now</button>
+        </div>
+        <div class="plan-card">
+          <div class="plan-badge">Enterprise</div>
+          <h3>Team Analysis</h3>
+          <div class="plan-price">₹1999 <span>/ team</span></div>
+          <ul class="plan-features">
+            <li>✓ Up to 10 members</li>
+            <li>✓ Group dynamics report</li>
+            <li>✓ Leadership profiling</li>
+            <li>✓ Monthly sessions</li>
+          </ul>
+          <button class="btn-plan" onclick="openBooking('team','1999')">Book Now</button>
+        </div>
+      </div>
+
+      <!-- Psychologist Profiles -->
+      <div class="psychologists-section">
+        <h3 class="ps-title">Meet Our Specialists</h3>
+        <div class="psych-grid" id="psychGrid"></div>
+      </div>
+    </section>
+
+    <!-- ===== ANALYSIS ===== -->
+    <section class="page" id="page-analysis">
+      <div class="page-hdr">
+        <h2>My Behavioral Profile</h2>
+        <p>Generated from your session data. Mint this as an NFT to own it on-chain.</p>
+      </div>
+      <div class="analysis-grid">
+        <!-- Score -->
+        <div class="ag-score">
+          <svg class="score-svg" viewBox="0 0 160 160">
+            <defs>
+              <linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#00e5ff"/>
+                <stop offset="100%" stop-color="#00ffc8"/>
+              </linearGradient>
+            </defs>
+            <circle cx="80" cy="80" r="66" fill="none" stroke="#1a2535" stroke-width="10"/>
+            <circle cx="80" cy="80" r="66" fill="none" stroke="url(#sg)" stroke-width="10"
+              stroke-linecap="round" stroke-dasharray="414" stroke-dashoffset="414"
+              id="scoreCircle" transform="rotate(-90 80 80)"/>
+          </svg>
+          <div class="score-center">
+            <div class="score-val" id="scoreVal">—</div>
+            <div class="score-lbl">Profile Score</div>
+          </div>
+          <button class="btn-mint" id="mintBtn" onclick="mintProfile()">⬡ Mint as NFT</button>
+          <div class="mint-status" id="mintStatus"></div>
+        </div>
+        <!-- Radar / Dimensions -->
+        <div class="ag-radar">
+          <h4>Cognitive Dimensions</h4>
+          <canvas id="radarCanvas" width="300" height="300"></canvas>
+        </div>
+        <!-- Traits -->
+        <div class="ag-traits">
+          <h4>Identified Traits</h4>
+          <div id="traitsList"></div>
+        </div>
+        <!-- Insights -->
+        <div class="ag-insights">
+          <h4>AI Insights</h4>
+          <div id="insightsList"></div>
+          <button class="btn-refresh" onclick="renderAnalysis()">↻ Refresh</button>
+        </div>
+        <!-- Data Log -->
+        <div class="ag-log">
+          <h4>Session Data</h4>
+          <div class="data-log" id="dataLog"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== BLOCKCHAIN ===== -->
+    <section class="page" id="page-blockchain">
+      <div class="page-hdr">
+        <h2>Blockchain Explorer</h2>
+        <p>View your on-chain behavioral profile, transaction history, and smart contract interactions.</p>
+      </div>
+      <div class="blockchain-layout">
+        <div class="bc-wallet-card" id="bcWalletCard">
+          <div class="bc-wc-top">
+            <span class="bc-wc-label">Connected Wallet</span>
+            <span class="bc-wc-net" id="bcNetwork">Not Connected</span>
+          </div>
+          <div class="bc-address" id="bcAddress">—</div>
+          <div class="bc-stats-row">
+            <div class="bc-stat"><span id="bcBalance">—</span><span>ETH Balance</span></div>
+            <div class="bc-stat"><span id="bcTxCount">—</span><span>Transactions</span></div>
+            <div class="bc-stat"><span id="bcNFTs">0</span><span>Profile NFTs</span></div>
+          </div>
+          <button class="btn-bc-connect" id="bcConnectBtn" onclick="connectWallet()">Connect MetaMask</button>
+        </div>
+        <div class="bc-contract-card">
+          <h4>Smart Contract</h4>
+          <div class="contract-addr">
+            <span class="ca-label">BehaviorChain Registry</span>
+            <span class="ca-addr">0xBC4...8f2d (Sepolia Testnet)</span>
+          </div>
+          <div class="contract-fns">
+            <button class="cf-btn" onclick="simulateContractCall('registerProfile')">registerProfile()</button>
+            <button class="cf-btn" onclick="simulateContractCall('getProfile')">getProfile()</button>
+            <button class="cf-btn" onclick="simulateContractCall('mintNFT')">mintBehaviorNFT()</button>
+            <button class="cf-btn" onclick="simulateContractCall('updateScore')">updateScore()</button>
+          </div>
+          <div class="contract-output" id="contractOutput">// Output will appear here...</div>
+        </div>
+        <div class="bc-tx-history">
+          <h4>Transaction History</h4>
+          <div class="tx-list" id="txList">
+            <p class="tx-empty">No transactions yet. Mint your profile to see activity.</p>
+          </div>
+        </div>
+        <div class="bc-events-live">
+          <h4>Live Event Stream</h4>
+          <div class="event-stream" id="eventStream"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ========== ARTICLE MODAL ========== -->
+<div class="modal-overlay hidden" id="articleModal">
+  <div class="modal-box article-modal">
+    <button class="modal-x" onclick="closeArticleModal()">✕</button>
+    <div id="articleModalBody"></div>
+  </div>
+</div>
+
+<!-- ========== BOOKING MODAL ========== -->
+<div class="modal-overlay hidden" id="bookingModal">
+  <div class="modal-box booking-modal">
+    <button class="modal-x" onclick="closeBookingModal()">✕</button>
+    <div id="bookingModalBody"></div>
+  </div>
+</div>
+
+<!-- ========== TOAST ========== -->
+<div id="toast" class="toast hidden"></div>
+
+<script src="script.js"></script>
+</body>
+</html>

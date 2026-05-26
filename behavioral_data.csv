@@ -1,0 +1,7 @@
+user,event,score
+User1,ArticleRead,78
+User1,GamePlayed,85
+User2,ChatInteraction,90
+User2,ArticleRead,70
+User3,GamePlayed,88
+User3,ChatInteraction,95
